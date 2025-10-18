@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Set Gold & Silver Rates</title>
+  <style>
+    body { font-family: Arial; max-width: 400px; margin: auto; padding: 20px; }
+    h2 { text-align: center; color: goldenrod; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background-color: goldenrod; color: white; border: none; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Set Gold & Silver Rates</h2>
+
+  <label>Gold rate per gram:</label>
+  <input type="number" id="gRate" placeholder="Enter Gold Rate per gram">
+
+  <label>Silver rate per gram:</label>
+  <input type="number" id="sRate" placeholder="Enter Silver Rate per gram">
+
+  <button onclick="saveRates()">Save & Go to Calculator</button>
+
+  <script>
+    function saveRates() {
+      const gRate = document.getElementById("gRate").value;
+      const sRate = document.getElementById("sRate").value;
+
+      if (!gRate || !sRate) {
+        alert("Please enter both Gold and Silver rates.");
+        return;
+      }
+
+      // Store rates in localStorage
+      localStorage.setItem("goldRate", gRate);
+      localStorage.setItem("silverRate", sRate);
+
+      // Redirect to calculator page
+      window.location.href = "calculator.html";
+    }
+  </script>
+</body>
+</html>

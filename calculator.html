@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gold & Silver Rate Calculator</title>
+  <style>
+    body { font-family: Arial; max-width: 400px; margin: auto; padding: 20px; }
+    h2 { text-align: center; }
+    input, select, button { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background-color: goldenrod; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #result { font-weight: bold; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h3 style="color:Red;text-align:center;">MANASHA JEWELLERY HOUSE</h3>
+  <h2>Gold & Silver Rate Calculator</h2><br>
+
+  <label>Select Metal:</label>
+  <select id="metal">
+    <option value="gold">Gold</option>
+    <option value="silver">Silver</option>
+  </select>
+
+  <label>Enter Weight (in grams):</label>
+  <input type="number" id="weight" placeholder="Enter weight in grams">
+
+  <label>Enter Exchange Weight (in grams):</label>
+  <input type="number" id="exWeight" placeholder="Enter Exchange weight if any">
+
+  <button onclick="calculate()">Calculate Total</button>
+  <button onclick="changeRate()">Change Rate Here</button>
+  <div id="result"></div>
+  <button class="print-btn" onclick="printResult()">Print Calculation</button>
+
+  <script>
+    function getMakingCharge(weight, metal, rate) {
+      if (metal === "silver") {
+        if (weight <= 10) return 30;
+        else if (weight <= 20) return 25;
+        else return 20;
+      } else {
+        return (rate * 10)/100;
+      }
+    }
+
+    function calculate() {
+      const metal = document.getElementById("metal").value;
+      const weight = parseFloat(document.getElementById("weight").value);
+      let exWeight = parseFloat(document.getElementById("exWeight").value);
+      // Get rates from localStorage
+      let gRate = parseFloat(localStorage.getItem("goldRate"));
+      let sRate = parseFloat(localStorage.getItem("silverRate"));
+      let netWeight = 0;
+      if (isNaN(exWeight) || exWeight <= 0) {
+        exWeight = 0;
+        netWeight = weight;
+      }else{
+        netWeight = weight - exWeight;
+      }
+      if (isNaN(weight) || weight <= 0) {
+        document.getElementById("result").innerText = "Please enter a valid weight.";
+        return;
+      }
+
+      let rate = metal === "gold" ? gRate : sRate;
+      const makingCharge = getMakingCharge(weight, metal, rate);
+      const total = (rate * netWeight) + (makingCharge * weight);
+
+      document.getElementById("result").innerHTML = `
+        Metal: <b>${metal.toUpperCase()}</b><br>
+        Weight: <b>${weight} gm</b><br>
+        Exchange Weight: <b>${exWeight} gm</b><br>
+        Net Weight: <b>${netWeight} gm</b><br>
+        Base Rate: ₹${rate}/gm<br>
+        Making Charge: ₹${makingCharge}/gm<br>
+        <hr>
+        <h3>Total: ₹${total.toFixed(2)}</h3>
+      `;
+    }
+    
+    function changeRate() {
+      window.location.href = "rates.html";
+    }
+
+    function printResult() {
+      const resultDiv = document.getElementById("result");
+      if (resultDiv.innerHTML.trim() === "") {
+        alert("Please calculate before printing.");
+        return;
+      }
+
+      const printWindow = window.open('', '', 'width=400,height=600');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Calculation</title>
+            <style>
+              body { font-family: Arial; text-align: center; padding: 20px; }
+              h2 { color: goldenrod; }
+              div { border: 1px solid #ccc; padding: 10px; border-radius: 8px; }
+            </style>
+          </head>
+          <body>
+            <div>Estimate</div>
+            <hr>
+            <h2>MANASHA JEWELLERY HOUSE</h2>
+            <h3>Gold & Silver Rate Calculation</h3>
+            ${resultDiv.innerHTML}
+            <br><br>
+            <small>Printed on: ${new Date().toLocaleString()}</small>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    // Optional: warn if no rate is set
+    window.onload = function() {
+      if (!localStorage.getItem("goldRate") || !localStorage.getItem("silverRate")) {
+        alert("Please set rates first.");
+        window.location.href = "rates.html";
+      }
+    };
+  </script>
+</body>
+</html>
