@@ -36,7 +36,8 @@
       if (metal === "silver") {
         if (weight <= 10) return 30;
         else if (weight <= 20) return 25;
-        else return 20;
+        else if (weight <= 50) return 20;
+        else return 10;
       } else {
         return (rate * 10)/100;
       }
